@@ -1,1 +1,130 @@
+```json
+[
+  {
+    "name": "Fan",
+    "power": 75,
+    "category": "Cooling"
+  },
+  {
+    "name": "Fan",
+    "power": 35,
+    "category": "Cooling"
+  },
+  {
+    "name": "Air Conditioner",
+    "power": 1500,
+    "category": "Cooling"
+  },
+  {
+    "name": "Inverter AC",
+    "power": 1200,
+    "category": "Cooling"
+  },
+  {
+    "name": "Air Cooler",
+    "power": 200,
+    "category": "Cooling"
+  },
+  {
+    "name": "LED Bulb",
+    "power": 10,
+    "category": "Lighting"
+  },
+  {
+    "name": "Tube Light",
+    "power": 20,
+    "category": "Lighting"
+  },
+  {
+    "name": "LED Panel Light",
+    "power": 40,
+    "category": "Lighting"
+  },
+  {
+    "name": "Refrigerator",
+    "power": 300,
+    "category": "Kitchen"
+  },
+  {
+    "name": "Deep Freezer",
+    "power": 500,
+    "category": "Kitchen"
+  },
+  {
+    "name": "Microwave Oven",
+    "power": 1200,
+    "category": "Kitchen"
+  },
+  {
+    "name": "Induction Cooktop",
+    "power": 1800,
+    "category": "Kitchen"
+  },
+  {
+    "name": "Electric Kettle",
+    "power": 1500,
+    "category": "Kitchen"
+  },
+  {
+    "name": "Water Purifier",
+    "power": 60,
+    "category": "Kitchen"
+  },
+  {
+    "name": "Desktop Computer",
+    "power": 200,
+    "category": "Office"
+  },
+  {
+    "name": "Laptop",
+    "power": 65,
+    "category": "Office"
+  },
+  {
+    "name": "Printer",
+    "power": 100,
+    "category": "Office"
+  },
+  {
+    "name": "WiFi Router",
+    "power": 15,
+    "category": "Office"
+  },
+  {
+    "name": "Projector",
+    "power": 300,
+    "category": "Office"
+  },
+  {
+    "name": "Washing Machine",
+    "power": 500,
+    "category": "Home"
+  },
+  {
+    "name": "Television",
+    "power": 120,
+    "category": "Home"
+  },
+  {
+    "name": "Water Heater",
+    "power": 2000,
+    "category": "Home"
+  },
+  {
+    "name": "CCTV Camera",
+    "power": 10,
+    "category": "Security"
+  },
+  {
+    "name": "Elevator",
+    "power": 5000,
+    "category": "Commercial"
+  },
+  {
+    "name": "Coffee Machine",
+    "power": 1000,
+    "category": "Commercial"
+  }
+]
+```
 
