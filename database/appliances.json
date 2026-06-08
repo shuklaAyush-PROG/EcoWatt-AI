@@ -6,7 +6,7 @@
     "category": "Cooling"
   },
   {
-    "name": "Fan",
+    "name": "BLDC Fan",
     "power": 35,
     "category": "Cooling"
   },
