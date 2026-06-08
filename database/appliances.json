@@ -1,28 +1,7 @@
-
 [
   {
     "name": "Fan",
     "power": 75,
-    "category": "Cooling"
-  },
-  {
-    "name": "BLDC Fan",
-    "power": 35,
-    "category": "Cooling"
-  },
-  {
-    "name": "Air Conditioner",
-    "power": 1500,
-    "category": "Cooling"
-  },
-  {
-    "name": "Inverter AC",
-    "power": 1200,
-    "category": "Cooling"
-  },
-  {
-    "name": "Air Cooler",
-    "power": 200,
     "category": "Cooling"
   },
   {
@@ -32,13 +11,18 @@
   },
   {
     "name": "Tube Light",
-    "power": 20,
+    "power": 40,
     "category": "Lighting"
   },
   {
-    "name": "LED Panel Light",
-    "power": 40,
-    "category": "Lighting"
+    "name": "Air Conditioner",
+    "power": 1500,
+    "category": "Cooling"
+  },
+  {
+    "name": "Cooler",
+    "power": 200,
+    "category": "Cooling"
   },
   {
     "name": "Refrigerator",
@@ -46,33 +30,28 @@
     "category": "Kitchen"
   },
   {
-    "name": "Deep Freezer",
-    "power": 500,
-    "category": "Kitchen"
-  },
-  {
-    "name": "Microwave Oven",
+    "name": "Microwave",
     "power": 1200,
     "category": "Kitchen"
   },
   {
-    "name": "Induction Cooktop",
-    "power": 1800,
+    "name": "Electric Oven",
+    "power": 2000,
     "category": "Kitchen"
   },
   {
-    "name": "Electric Kettle",
-    "power": 1500,
-    "category": "Kitchen"
+    "name": "Washing Machine",
+    "power": 500,
+    "category": "Home"
   },
   {
-    "name": "Water Purifier",
-    "power": 60,
-    "category": "Kitchen"
+    "name": "Television",
+    "power": 120,
+    "category": "Entertainment"
   },
   {
     "name": "Desktop Computer",
-    "power": 200,
+    "power": 250,
     "category": "Office"
   },
   {
@@ -91,19 +70,24 @@
     "category": "Office"
   },
   {
+    "name": "Water Pump",
+    "power": 750,
+    "category": "Utility"
+  },
+  {
+    "name": "Deep Freezer",
+    "power": 500,
+    "category": "Commercial"
+  },
+  {
+    "name": "Coffee Machine",
+    "power": 1000,
+    "category": "Commercial"
+  },
+  {
     "name": "Projector",
     "power": 300,
     "category": "Office"
-  },
-  {
-    "name": "Washing Machine",
-    "power": 500,
-    "category": "Home"
-  },
-  {
-    "name": "Television",
-    "power": 120,
-    "category": "Home"
   },
   {
     "name": "Water Heater",
@@ -111,20 +95,8 @@
     "category": "Home"
   },
   {
-    "name": "CCTV Camera",
-    "power": 10,
-    "category": "Security"
-  },
-  {
-    "name": "Elevator",
-    "power": 5000,
-    "category": "Commercial"
-  },
-  {
-    "name": "Coffee Machine",
-    "power": 1000,
-    "category": "Commercial"
+    "name": "Induction Stove",
+    "power": 1800,
+    "category": "Kitchen"
   }
 ]
-
-
