@@ -1,12 +1,76 @@
-
 [
-  "Home",
-  "Bakery",
-  "Restaurant",
-  "Office",
-  "Computer Lab",
-  "Grocery Store",
-  "Gym",
-  "Cafe"
+  {
+    "type": "Home",
+    "recommended_appliances": [
+      "Fan",
+      "LED Bulb",
+      "Refrigerator",
+      "Television",
+      "Washing Machine"
+    ]
+  },
+  {
+    "type": "Bakery",
+    "recommended_appliances": [
+      "Air Conditioner",
+      "Fan",
+      "Microwave",
+      "Electric Oven",
+      "Refrigerator",
+      "LED Bulb"
+    ]
+  },
+  {
+    "type": "Restaurant",
+    "recommended_appliances": [
+      "Air Conditioner",
+      "Deep Freezer",
+      "Microwave",
+      "Electric Oven",
+      "Water Pump",
+      "LED Bulb"
+    ]
+  },
+  {
+    "type": "Office",
+    "recommended_appliances": [
+      "Desktop Computer",
+      "Laptop",
+      "Printer",
+      "WiFi Router",
+      "Air Conditioner",
+      "LED Bulb",
+      "Projector"
+    ]
+  },
+  {
+    "type": "Computer Lab",
+    "recommended_appliances": [
+      "Desktop Computer",
+      "Air Conditioner",
+      "LED Bulb",
+      "Projector",
+      "WiFi Router"
+    ]
+  },
+  {
+    "type": "Grocery Store",
+    "recommended_appliances": [
+      "Deep Freezer",
+      "Refrigerator",
+      "LED Bulb",
+      "Fan",
+      "Air Conditioner"
+    ]
+  },
+  {
+    "type": "Cafe",
+    "recommended_appliances": [
+      "Coffee Machine",
+      "Microwave",
+      "Air Conditioner",
+      "LED Bulb",
+      "Fan"
+    ]
+  }
 ]
-

@@ -1,9 +1,22 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+import json
+
 from routes.energy import energy_bp
 from routes.solar import solar_bp
 from routes.carbon import carbon_bp
 from routes.analyze import analyze_bp
-from flask_cors import CORS
+
+from routes.solar import (
+    recommend_solar,
+    predict_generation,
+    calculate_savings,
+    calculate_payback,
+    sustainability_score,
+    get_grade,
+    generate_recommendations,
+    get_system_cost
+)
 app = Flask(__name__)
 CORS(app)
 app.register_blueprint(energy_bp)
@@ -79,6 +92,75 @@ def bill():
     })
 
 
+<<<<<<< HEAD
+=======
+    city = data['city']
+    roof = data['roofSize']
+    usage = data['monthlyUsage']
+    rate = data['electricityRate']
+
+    solar_size = recommend_solar(
+        roof,
+        usage
+    )
+
+    generation = predict_generation(
+        solar_size,
+        city
+    )
+
+    savings = calculate_savings(
+        generation,
+        rate
+    )
+
+    system_cost = get_system_cost(
+        solar_size
+    )
+
+    payback = calculate_payback(
+        system_cost,
+        savings["annual"]
+    )
+
+    score = sustainability_score(
+        solar_size,
+        roof
+    )
+
+    grade = get_grade(score)
+
+    recommendations = generate_recommendations(
+        usage
+    )
+
+    return jsonify({
+
+        "solarSize": solar_size,
+        "monthlyGeneration": generation,
+        "monthlySavings": savings["monthly"],
+        "annualSavings": savings["annual"],
+        "systemCost": system_cost,
+        "paybackYears": payback,
+        "score": score,
+        "grade": grade,
+        "recommendations": recommendations
+
+    })
+@app.route('/carbon', methods=['POST'])
+def carbon():
+
+    data = request.get_json()
+
+    monthly_units = data['monthly_units']
+
+    carbon_kg = round(monthly_units * 0.82, 2)
+
+    return jsonify({
+        "monthly_units": monthly_units,
+        "carbon_kg": carbon_kg
+    })
+>>>>>>> 550d8f42fb6a92ef7e83d95d0aac628e42970aac
 @app.route('/eco_score', methods=['POST'])
 def eco_score():
 

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoWatt AI — Sustainable Energy Planning</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Background grid -->
+  <div class="bg-grid" aria-hidden="true"></div>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <!-- ── HEADER ── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <div>
+          <span class="logo-name">EcoWatt <em>AI</em></span>
+          <span class="logo-tagline">Sustainable Energy Planning</span>
+        </div>
+      </div>
+      <nav class="header-nav">
+
+  <button id="themeToggle" class="btn-download">
+    🌙 Dark Mode
+  </button>
+
+  <span class="badge badge--live">
+    ● Live Calculator
+  </span>
+
+</nav>
+    </div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <h1 class="hero-title">
+      Plan Smarter.<br />
+      <span class="accent">Save Greener.</span>
+    </h1>
+    <p class="hero-sub">Enter your energy profile below to get an instant AI-powered sustainability analysis, solar recommendations, and carbon footprint breakdown.</p>
+  </section>
+
+  <!-- ── MAIN ── -->
+  <main class="main-layout">
+
+    <!-- INPUT PANEL -->
+    <aside class="input-panel glass-card" id="inputPanel">
+      <div class="panel-header">
+        <span class="panel-number">01</span>
+        <h2>Energy Profile</h2>
+      </div>
+
+      <div class="form-grid">
+        <!-- Business Type -->
+        <div class="field-group">
+          <label for="businessType">Business Type</label>
+          <div class="select-wrap">
+            <select id="businessType">
+              <option value="">— Select —</option>
+              <option value="residential">Residential Home</option>
+              <option value="small_office">Small Office</option>
+              <option value="retail">Retail Store</option>
+              <option value="restaurant">Restaurant / Café</option>
+              <option value="warehouse">Warehouse / Factory</option>
+              <option value="hotel">Hotel / Hospitality</option>
+              <option value="school">School / Institution</option>
+              <option value="hospital">Hospital / Clinic</option>
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+
+        <!-- Appliance -->
+        <div class="field-group">
+          <label for="appliance">Appliance Type</label>
+          <div class="select-wrap">
+            <select id="appliance">
+              <option value="">— Select —</option>
+              <option value="ac" data-watts="1500">Air Conditioner (1.5 kW)</option>
+              <option value="refrigerator" data-watts="150">Refrigerator (150 W)</option>
+              <option value="computer" data-watts="300">Desktop Computer (300 W)</option>
+              <option value="led_light" data-watts="10">LED Light (10 W)</option>
+              <option value="washing_machine" data-watts="500">Washing Machine (500 W)</option>
+              <option value="microwave" data-watts="1200">Microwave (1.2 kW)</option>
+              <option value="water_heater" data-watts="2000">Water Heater (2 kW)</option>
+              <option value="server" data-watts="400">Server / IT Equipment (400 W)</option>
+              <option value="industrial_motor" data-watts="7500">Industrial Motor (7.5 kW)</option>
+              <option value="ev_charger" data-watts="7200">EV Charger (7.2 kW)</option>
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+
+        <!-- Quantity -->
+        <div class="field-group">
+          <label for="quantity">Quantity</label>
+          <div class="input-wrap">
+            <input type="number" id="quantity" min="1" max="1000" value="1" placeholder="e.g. 5" />
+            <span class="input-unit">units</span>
+          </div>
+        </div>
+
+        <!-- Usage Hours -->
+        <div class="field-group">
+          <label for="usageHours">Daily Usage</label>
+          <div class="input-wrap">
+            <input type="number" id="usageHours" min="0.5" max="24" step="0.5" value="8" placeholder="e.g. 8" />
+            <span class="input-unit">hrs/day</span>
+          </div>
+        </div>
+
+        <!-- Electricity Rate -->
+        <div class="field-group field-group--full">
+          <label for="elecRate">Electricity Rate</label>
+          <div class="input-wrap">
+            <span class="input-prefix">₹</span>
+            <input type="number" id="elecRate" min="1" max="30" step="0.5" value="8" placeholder="e.g. 8" />
+            <span class="input-unit">per kWh</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-calculate" id="calcBtn" onclick="calculate()">
+        <span class="btn-icon">⚡</span> Analyse Energy
+      </button>
+
+      <p class="hint" id="formHint">Select a business type and appliance to begin.</p>
+    </aside>
+
+    <!-- RESULTS PANEL -->
+    <section class="results-panel" id="resultsPanel">
+
+      <!-- KPI CARDS -->
+      <div class="cards-grid" id="cardsGrid">
+        <div class="kpi-card" id="card-consumption">
+          <div class="kpi-icon">🔋</div>
+          <div class="kpi-label">Monthly Consumption</div>
+          <div class="kpi-value" id="val-consumption">—</div>
+          <div class="kpi-unit">kWh / month</div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" id="bar-consumption"></div></div>
+        </div>
+
+        <div class="kpi-card" id="card-bill">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-label">Monthly Bill</div>
+          <div class="kpi-value" id="val-bill">—</div>
+          <div class="kpi-unit">INR / month</div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" id="bar-bill"></div></div>
+        </div>
+
+        <div class="kpi-card" id="card-solar">
+          <div class="kpi-icon">☀️</div>
+          <div class="kpi-label">Solar Capacity Needed</div>
+          <div class="kpi-value" id="val-solar">—</div>
+          <div class="kpi-unit">kWp system</div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" id="bar-solar"></div></div>
+        </div>
+
+        <div class="kpi-card" id="card-carbon">
+          <div class="kpi-icon">🌿</div>
+          <div class="kpi-label">Carbon Footprint</div>
+          <div class="kpi-value" id="val-carbon">—</div>
+          <div class="kpi-unit">kg CO₂ / month</div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" id="bar-carbon"></div></div>
+        </div>
+
+        <div class="kpi-card" id="card-savings">
+          <div class="kpi-icon">📈</div>
+          <div class="kpi-label">Annual Savings</div>
+          <div class="kpi-value" id="val-savings">—</div>
+          <div class="kpi-unit">INR / year</div>
+          <div class="kpi-bar">
+          <div class="kpi-bar-fill" id="bar-savings"></div>
+        </div>
+      </div>
+      <div class="kpi-card" id="card-co2saved">
+  <div class="kpi-icon">🌎</div>
+  <div class="kpi-label">CO₂ Saved / Year</div>
+  <div class="kpi-value" id="val-co2saved">—</div>
+  <div class="kpi-unit">kg/year</div>
+  <div class="kpi-bar">
+    <div class="kpi-bar-fill" id="bar-co2saved"></div>
+  </div>
+</div>
+
+
+
+
+        <div class="kpi-card kpi-card--score" id="card-score">
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="50" class="ring-bg" />
+              <circle cx="60" cy="60" r="50" class="ring-fill" id="ringFill" stroke-dasharray="0 314" />
+            </svg>
+            <div class="score-inner">
+              <div class="score-num" id="val-score">—</div>
+              <div class="score-label-sm">/ 100</div>
+            </div>
+          </div>
+          <div class="kpi-label">Sustainability Score</div>
+          <div class="kpi-unit" id="score-grade">Enter your data</div>
+        </div>
+      </div>
+
+      <!-- EXPANSION SIMULATOR -->
+      <div class="section-card glass-card" id="expansionSection">
+        <div class="panel-header">
+          <span class="panel-number">02</span>
+          <h2>Expansion Simulator</h2>
+        </div>
+        <p class="section-desc">Simulate how adding more units impacts your energy costs and carbon output.</p>
+
+        <div class="simulator-controls">
+          <div class="sim-field">
+            <label for="simUnits">Additional Units</label>
+            <input type="range" id="simUnits" min="1" max="50" value="5" oninput="updateSimulator()" />
+            <span class="range-val" id="simUnitsVal">5</span>
+          </div>
+          <div class="sim-field">
+            <label for="simHours">Extra Hours/Day</label>
+            <input type="range" id="simHours" min="0" max="16" value="2" step="0.5" oninput="updateSimulator()" />
+            <span class="range-val" id="simHoursVal">2</span>
+          </div>
+        </div>
+
+        <div class="simulator-results" id="simResults">
+          <div class="sim-stat">
+            <span class="sim-label">Extra Consumption</span>
+            <span class="sim-value" id="sim-extra-kwh">—</span>
+          </div>
+          <div class="sim-stat">
+            <span class="sim-label">Extra Monthly Cost</span>
+            <span class="sim-value" id="sim-extra-cost">—</span>
+          </div>
+          <div class="sim-stat">
+            <span class="sim-label">Total Projected Bill</span>
+            <span class="sim-value highlight" id="sim-total-bill">—</span>
+          </div>
+          <div class="sim-stat">
+            <span class="sim-label">Added CO₂ / month</span>
+            <span class="sim-value warn" id="sim-extra-co2">—</span>
+          </div>
+        </div>
+      </div>
+      <div class="section-card glass-card">
+  <div class="panel-header">
+    <span class="panel-number">03</span>
+    <h2>Energy Trend</h2>
+  </div>
+
+  <p class="section-desc">
+    Estimated monthly electricity consumption trend.
+  </p>
+
+  <canvas id="energyChart" height="120"></canvas>
+</div>
+<div class="section-card glass-card" id="roiSection">
+
+  <div class="panel-header">
+    <span class="panel-number">04</span>
+    <h2>Solar ROI Calculator</h2>
+  </div>
+<div class="section-card glass-card">
+  <div class="panel-header">
+    <span class="panel-number">05</span>
+    <h2>Smart Appliance Comparison</h2>
+  </div>
+
+  <div id="comparisonBox">
+    <p>Select an appliance and run analysis.</p>
+  </div>
+</div>
+  <p class="section-desc">
+    Estimate solar installation cost and payback period.
+  </p>
+
+  <div class="simulator-results">
+
+    <div class="sim-stat">
+      <span class="sim-label">Estimated Solar Cost</span>
+      <span class="sim-value" id="roi-cost">—</span>
+    </div>
+
+    <div class="sim-stat">
+      <span class="sim-label">Annual Savings</span>
+      <span class="sim-value" id="roi-savings">—</span>
+    </div>
+
+    <div class="sim-stat">
+      <span class="sim-label">Payback Period</span>
+      <span class="sim-value highlight" id="roi-payback">—</span>
+      <div id="roi-status" class="kpi-unit"></div>
+    </div>
+
+  </div>
+
+</div>
+
+      <!-- RECOMMENDATIONS -->
+      <div class="section-card glass-card" id="recoSection">
+        <div class="panel-header">
+          <span class="panel-number">05</span>
+          <h2>AI Recommendations</h2>
+        </div>
+        <ul class="reco-list" id="recoList">
+          <li class="reco-item reco-item--placeholder">Run your analysis to receive personalised recommendations.</li>
+        </ul>
+      </div>
+      <div class="section-card glass-card">
+  <div class="panel-header">
+    <span class="panel-number">06</span>
+    <h2>Appliance Database</h2>
+  </div>
+
+  <table class="appliance-table">
+    <thead>
+      <tr>
+        <th>Appliance</th>
+        <th>Power Rating</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr><td>LED Light</td><td>10 W</td></tr>
+      <tr><td>Refrigerator</td><td>150 W</td></tr>
+      <tr><td>Desktop Computer</td><td>300 W</td></tr>
+      <tr><td>Washing Machine</td><td>500 W</td></tr>
+      <tr><td>Microwave</td><td>1200 W</td></tr>
+      <tr><td>Air Conditioner</td><td>1500 W</td></tr>
+      <tr><td>Water Heater</td><td>2000 W</td></tr>
+      <tr><td>EV Charger</td><td>7200 W</td></tr>
+      <tr><td>Industrial Motor</td><td>7500 W</td></tr>
+    </tbody>
+  </table>
+</div>
+
+      <!-- DOWNLOAD -->
+      <div class="download-bar glass-card">
+        <div class="download-info">
+          <span class="download-icon">📄</span>
+          <div>
+            <strong>Full Energy Report</strong>
+            <span>PDF with all metrics, solar plan &amp; recommendations</span>
+          </div>
+        </div>
+        <button class="btn-download" id="downloadBtn" onclick="downloadPDF()">
+          ↓ Download PDF Report
+        </button>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>EcoWatt AI &copy; 2025 &mdash; Powered by sustainable intelligence. Data is illustrative; consult a certified energy auditor for professional advice.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
