@@ -1,7 +1,4 @@
-from fastapi import APIRouter
 import json
-
-router = APIRouter()
 
 # ==========================
 # Solar Recommendation
@@ -98,20 +95,15 @@ def calculate_payback(system_cost, annual_savings):
 # Sustainability Score
 # ==========================
 
-def sustainability_score(
-    solar_size,
-    roof_size
-):
+def sustainability_score(solar_size, roof_size):
 
-    score = min(
+    return min(
         100,
         round(
             (solar_size * 15)
             + (roof_size / 50)
         )
     )
-
-    return score
 
 
 # ==========================
@@ -136,9 +128,7 @@ def get_grade(score):
 # Recommendations
 # ==========================
 
-def generate_recommendations(
-    monthly_usage
-):
+def generate_recommendations(monthly_usage):
 
     recommendations = []
 
@@ -160,98 +150,4 @@ def generate_recommendations(
     )
 
     return recommendations
-
-
-# ==========================
-# API Route
-# ==========================
-
-@router.post("/solar-analysis")
-def solar_analysis(data: dict):
-
-    city = data["city"]
-
-    roof = data["roofSize"]
-
-    usage = data["monthlyUsage"]
-
-    rate = data["electricityRate"]
-
-
-    # Solar Size
-    solar = recommend_solar(
-        roof,
-        usage
-    )
-
-
-    # Generation
-    generation = predict_generation(
-        solar,
-        city
-    )
-
-
-    # Savings
-    savings = calculate_savings(
-        generation,
-        rate
-    )
-
-
-    # System Cost from JSON
-    system_cost = get_system_cost(
-        solar
-    )
-
-
-    # Payback
-    payback = calculate_payback(
-        system_cost,
-        savings["annual"]
-    )
-
-
-    # Sustainability Score
-    score = sustainability_score(
-        solar,
-        roof
-    )
-
-    grade = get_grade(score)
-
-
-    # Recommendations
-    recommendations = generate_recommendations(
-        usage
-    )
-
-
-    return {
-
-        "solarSize": solar,
-
-        "monthlyGeneration": generation,
-
-        "monthlySavings":
-            savings["monthly"],
-
-        "annualSavings":
-            savings["annual"],
-
-        "systemCost":
-            system_cost,
-
-        "paybackYears":
-            payback,
-
-        "score":
-            score,
-
-        "grade":
-            grade,
-
-        "recommendations":
-            recommendations
-    }
 
