@@ -90,10 +90,11 @@ def bill():
     return jsonify({
         "monthly_bill": bill_amount
     })
+@app.route('/solar-analysis', methods=['POST'])
+def solar_analysis():
 
-
-<<<<<<< HEAD
-=======
+    data = request.get_json()
+ 
     city = data['city']
     roof = data['roofSize']
     usage = data['monthlyUsage']
@@ -160,7 +161,7 @@ def carbon():
         "monthly_units": monthly_units,
         "carbon_kg": carbon_kg
     })
->>>>>>> 550d8f42fb6a92ef7e83d95d0aac628e42970aac
+
 @app.route('/eco_score', methods=['POST'])
 def eco_score():
 
