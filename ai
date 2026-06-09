@@ -1,0 +1,142 @@
+
+# EcoWatt AI+ Day 1
+# Single Appliance Energy Calculator
+
+
+print("===== EcoWatt AI+ Energy Calculator =====")
+
+# Input
+appliance_name = input("Enter Appliance Name: ")
+
+wattage = float(input("Enter Wattage (W): "))
+hours_per_day = float(input("Enter Hours Used Per Day: "))
+electricity_rate = float(input("Enter Electricity Rate (₹/unit): "))
+
+# Calculations
+daily_units = (wattage * hours_per_day) / 1000
+
+monthly_units = daily_units * 30
+
+yearly_units = monthly_units * 12
+
+monthly_bill = monthly_units * electricity_rate
+
+yearly_bill = monthly_bill * 12
+
+carbon_factor = 0.82
+
+monthly_carbon = monthly_units * carbon_factor
+
+yearly_carbon = monthly_carbon * 12
+
+# Output
+print("\n===== REPORT =====")
+
+print("Appliance:", appliance_name)
+
+print(f"Daily Units Consumed      : {daily_units:.2f} kWh")
+print(f"Monthly Units Consumed    : {monthly_units:.2f} kWh")
+print(f"Yearly Units Consumed     : {yearly_units:.2f} kWh")
+
+print(f"Monthly Bill             : ₹{monthly_bill:.2f}")
+print(f"Yearly Bill              : ₹{yearly_bill:.2f}")
+
+print(f"Monthly CO₂ Emission     : {monthly_carbon:.2f} kg")
+print(f"Yearly CO₂ Emission      : {yearly_carbon:.2f} kg")
+
+
+# =====================================
+# EcoWatt AI+ Day 2
+# Multi Appliance Energy Analyzer
+
+
+print("===== EcoWatt AI+ Home Energy Analyzer =====")
+
+num_appliances = int(input("How many appliances do you want to enter? "))
+
+electricity_rate = float(input("Enter Electricity Rate (₹/unit): "))
+
+total_monthly_units = 0
+total_monthly_bill = 0
+total_carbon = 0
+
+carbon_factor = 0.82
+
+appliances = []
+
+for i in range(num_appliances):
+
+    print(f"\nAppliance {i+1}")
+
+    name = input("Name: ")
+
+    wattage = float(input("Wattage (W): "))
+
+    hours = float(input("Hours Used Per Day: "))
+
+    daily_units = (wattage * hours) / 1000
+
+    monthly_units = daily_units * 30
+
+    monthly_bill = monthly_units * electricity_rate
+
+    carbon = monthly_units * carbon_factor
+
+    appliances.append({
+        "name": name,
+        "monthly_units": monthly_units,
+        "monthly_bill": monthly_bill,
+        "carbon": carbon
+    })
+
+    total_monthly_units += monthly_units
+    total_monthly_bill += monthly_bill
+    total_carbon += carbon
+
+# Results
+
+print("\n\n===== APPLIANCE REPORT =====")
+
+for appliance in appliances:
+
+    print("\n-------------------------")
+
+    print("Appliance:", appliance["name"])
+
+    print(f"Monthly Units : {appliance['monthly_units']:.2f} kWh")
+
+    print(f"Monthly Bill  : ₹{appliance['monthly_bill']:.2f}")
+
+    print(f"CO₂ Emission  : {appliance['carbon']:.2f} kg")
+
+print("\n============================")
+
+print("TOTAL HOME ANALYSIS")
+
+print(f"Total Monthly Units : {total_monthly_units:.2f} kWh")
+
+print(f"Total Monthly Bill  : ₹{total_monthly_bill:.2f}")
+
+print(f"Total CO₂ Emission  : {total_carbon:.2f} kg")
+
+print("============================")
+
+# Efficiency Suggestions
+
+print("\n===== AI SUGGESTIONS =====")
+
+if total_monthly_units > 500:
+    print("High electricity consumption detected.")
+    print("Consider energy-efficient appliances.")
+
+elif total_monthly_units > 250:
+    print("Moderate electricity consumption.")
+
+else:
+    print("Good energy efficiency level.")
+
+if total_carbon > 400:
+    print("Carbon footprint is high.")
+    print("Consider solar energy integration.")
+
+print("\nAnalysis Completed Successfully.")

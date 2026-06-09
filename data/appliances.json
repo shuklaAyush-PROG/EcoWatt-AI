@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Fan",
+    "power": 75,
+    "category": "Cooling"
+  },
+  {
+    "name": "Air Cooler",
+    "power": 200,
+    "category": "Cooling"
+  },
+  {
+    "name": "AC",
+    "power": 1500,
+    "category": "Cooling"
+  },
+  {
+    "name": "LED Bulb",
+    "power": 10,
+    "category": "Lighting"
+  },
+  {
+    "name": "Tube Light",
+    "power": 20,
+    "category": "Lighting"
+  },
+  {
+    "name": "TV",
+    "power": 120,
+    "category": "Electronics"
+  },
+  {
+    "name": "Laptop",
+    "power": 65,
+    "category": "Electronics"
+  }
+]

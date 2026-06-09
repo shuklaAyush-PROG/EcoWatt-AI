@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Fan",
+    "power": 75,
+    "category": "Cooling"
+  },
+  {
+    "name": "LED Bulb",
+    "power": 10,
+    "category": "Lighting"
+  },
+  {
+    "name": "Tube Light",
+    "power": 40,
+    "category": "Lighting"
+  },
+  {
+    "name": "Air Conditioner",
+    "power": 1500,
+    "category": "Cooling"
+  },
+  {
+    "name": "Cooler",
+    "power": 200,
+    "category": "Cooling"
+  },
+  {
+    "name": "Refrigerator",
+    "power": 300,
+    "category": "Kitchen"
+  },
+  {
+    "name": "Microwave",
+    "power": 1200,
+    "category": "Kitchen"
+  },
+  {
+    "name": "Electric Oven",
+    "power": 2000,
+    "category": "Kitchen"
+  },
+  {
+    "name": "Washing Machine",
+    "power": 500,
+    "category": "Home"
+  },
+  {
+    "name": "Television",
+    "power": 120,
+    "category": "Entertainment"
+  },
+  {
+    "name": "Desktop Computer",
+    "power": 250,
+    "category": "Office"
+  },
+  {
+    "name": "Laptop",
+    "power": 65,
+    "category": "Office"
+  },
+  {
+    "name": "Printer",
+    "power": 100,
+    "category": "Office"
+  },
+  {
+    "name": "WiFi Router",
+    "power": 15,
+    "category": "Office"
+  },
+  {
+    "name": "Water Pump",
+    "power": 750,
+    "category": "Utility"
+  },
+  {
+    "name": "Deep Freezer",
+    "power": 500,
+    "category": "Commercial"
+  },
+  {
+    "name": "Coffee Machine",
+    "power": 1000,
+    "category": "Commercial"
+  },
+  {
+    "name": "Projector",
+    "power": 300,
+    "category": "Office"
+  },
+  {
+    "name": "Water Heater",
+    "power": 2000,
+    "category": "Home"
+  },
+  {
+    "name": "Induction Stove",
+    "power": 1800,
+    "category": "Kitchen"
+  }
+]
