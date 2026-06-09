@@ -6,20 +6,47 @@ import os
 # Load environment variables
 load_dotenv()
 
-# Get MongoDB URI
+# MongoDB URI
 uri = os.getenv("MONGO_URI")
 
 # Connect to MongoDB
 client = MongoClient(uri)
 
-# Create/access database
+# Database
 db = client["ecowatt"]
 
-# Open JSON file
-with open("database/appliances.json") as file:
-    data = json.load(file)
+# Clear old appliance data
+db.appliances.delete_many({})
 
-# Insert data into MongoDB
-db.appliances.insert_many(data)
+# Load appliance data
+with open("database/appliances.json") as file:
+    appliance_data = json.load(file)
+
+# Insert appliance data
+db.appliances.insert_many(appliance_data)
 
 print("Appliance data imported successfully!")
+
+# Clear old business data
+db.business_types.delete_many({})
+
+# Load business types data
+with open("database/business_types.json") as file:
+    business_data = json.load(file)
+
+# Insert business data
+db.business_types.insert_many(business_data)
+
+print("Business types imported successfully!")
+
+# Clear old solar pricing data
+db.solar_pricing.delete_many({})
+
+# Load solar pricing data
+with open("database/solar_pricing.json") as file:
+    solar_data = json.load(file)
+
+# Insert solar pricing data
+db.solar_pricing.insert_many(solar_data)
+
+print("Solar pricing imported successfully!")
