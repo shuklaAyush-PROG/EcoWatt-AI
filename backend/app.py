@@ -1,5 +1,15 @@
 from flask import Flask, jsonify, request
 import json
+from routes.solar import (
+    recommend_solar,
+    predict_generation,
+    calculate_savings,
+    calculate_payback,
+    sustainability_score,
+    get_grade,
+    generate_recommendations,
+    get_system_cost
+)
 app = Flask(__name__)
 
 @app.route('/')
@@ -88,18 +98,58 @@ def solar():
 
     data = request.get_json()
 
-    monthly_units = data['monthly_units']
+    city = data['city']
+    roof = data['roofSize']
+    usage = data['monthlyUsage']
+    rate = data['electricityRate']
 
-    recommended_kw = round(monthly_units / 120, 2)
+    solar_size = recommend_solar(
+        roof,
+        usage
+    )
 
-    monthly_savings = round(monthly_units * 7, 2)
-    annual_savings = round(monthly_savings * 12, 2)
+    generation = predict_generation(
+        solar_size,
+        city
+    )
+
+    savings = calculate_savings(
+        generation,
+        rate
+    )
+
+    system_cost = get_system_cost(
+        solar_size
+    )
+
+    payback = calculate_payback(
+        system_cost,
+        savings["annual"]
+    )
+
+    score = sustainability_score(
+        solar_size,
+        roof
+    )
+
+    grade = get_grade(score)
+
+    recommendations = generate_recommendations(
+        usage
+    )
 
     return jsonify({
-        "monthly_units": monthly_units,
-        "recommended_solar_kw": recommended_kw,
-        "estimated_monthly_savings": monthly_savings,
-        "estimated_annual_savings": annual_savings
+
+        "solarSize": solar_size,
+        "monthlyGeneration": generation,
+        "monthlySavings": savings["monthly"],
+        "annualSavings": savings["annual"],
+        "systemCost": system_cost,
+        "paybackYears": payback,
+        "score": score,
+        "grade": grade,
+        "recommendations": recommendations
+
     })
 @app.route('/carbon', methods=['POST'])
 def carbon():
