@@ -50,3 +50,15 @@ with open("database/solar_pricing.json") as file:
 db.solar_pricing.insert_many(solar_data)
 
 print("Solar pricing imported successfully!")
+
+# Clear old sustainability rules
+db.sustainability_rules.delete_many({})
+
+# Load sustainability rules
+with open("database/sustainability_rules.json") as file:
+    sustainability_data = json.load(file)
+
+# Insert sustainability rules
+db.sustainability_rules.insert_one(sustainability_data)
+
+print("Sustainability rules imported successfully!")

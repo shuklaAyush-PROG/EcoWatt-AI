@@ -1,0 +1,6 @@
+{
+  "led_bonus": 20,
+  "solar_bonus": 30,
+  "efficient_ac_bonus": 20,
+  "high_consumption_penalty": -20
+}
