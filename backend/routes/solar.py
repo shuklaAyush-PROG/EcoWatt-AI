@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+import json
 
 router = APIRouter()
 
@@ -27,10 +28,37 @@ CITY_FACTOR = {
 
 
 # ==========================
+# Solar Price Lookup
+# ==========================
+
+def get_system_cost(solar_size):
+
+    try:
+
+        with open("database/solar_prices.json", "r") as file:
+            prices = json.load(file)
+
+        closest_price = prices[-1]["price"]
+
+        for item in prices:
+
+            if solar_size <= item["size_kw"]:
+                closest_price = item["price"]
+                break
+
+        return closest_price
+
+    except Exception:
+
+        return solar_size * 50000
+
+
+# ==========================
 # Generation Prediction
 # ==========================
 
 def predict_generation(solar_size, city):
+
     factor = CITY_FACTOR.get(city, 1.0)
 
     generation = solar_size * 120 * factor
@@ -84,6 +112,24 @@ def sustainability_score(
     )
 
     return score
+
+
+# ==========================
+# Sustainability Grade
+# ==========================
+
+def get_grade(score):
+
+    if score >= 80:
+        return "Excellent"
+
+    elif score >= 60:
+        return "Good"
+
+    elif score >= 40:
+        return "Average"
+
+    return "Poor"
 
 
 # ==========================
@@ -153,8 +199,10 @@ def solar_analysis(data: dict):
     )
 
 
-    # System Cost
-    system_cost = solar * 50000
+    # System Cost from JSON
+    system_cost = get_system_cost(
+        solar
+    )
 
 
     # Payback
@@ -169,6 +217,8 @@ def solar_analysis(data: dict):
         solar,
         roof
     )
+
+    grade = get_grade(score)
 
 
     # Recommendations
@@ -189,11 +239,17 @@ def solar_analysis(data: dict):
         "annualSavings":
             savings["annual"],
 
+        "systemCost":
+            system_cost,
+
         "paybackYears":
             payback,
 
         "score":
             score,
+
+        "grade":
+            grade,
 
         "recommendations":
             recommendations
