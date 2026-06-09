@@ -1,6 +1,17 @@
 from flask import Flask, jsonify, request
-import json
+from routes.energy import energy_bp
+from routes.solar import solar_bp
+from routes.carbon import carbon_bp
+from routes.analyze import analyze_bp
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app)
+app.register_blueprint(energy_bp)
+app.register_blueprint(solar_bp)
+app.register_blueprint(carbon_bp)
+app.register_blueprint(analyze_bp)
+import os
+
 
 @app.route('/')
 def home():
@@ -19,24 +30,7 @@ def appliances():
         data = json.load(file)
 
     return jsonify(data)
-@app.route('/calculate', methods=['POST'])
-def calculate():
 
-    data = request.get_json()
-
-    power = data['power']
-    quantity = data['quantity']
-    hours = data['hours']
-
-    daily_units = (power * quantity * hours) / 1000
-    monthly_units = daily_units * 30
-    yearly_units = monthly_units * 12
-
-    return jsonify({
-        "daily_units": daily_units,
-        "monthly_units": monthly_units,
-        "yearly_units": yearly_units
-    })
 @app.route('/calculate_by_appliance', methods=['POST'])
 def calculate_by_appliance():
 
@@ -83,37 +77,8 @@ def bill():
     return jsonify({
         "monthly_bill": bill_amount
     })
-@app.route('/solar', methods=['POST'])
-def solar():
 
-    data = request.get_json()
 
-    monthly_units = data['monthly_units']
-
-    recommended_kw = round(monthly_units / 120, 2)
-
-    monthly_savings = round(monthly_units * 7, 2)
-    annual_savings = round(monthly_savings * 12, 2)
-
-    return jsonify({
-        "monthly_units": monthly_units,
-        "recommended_solar_kw": recommended_kw,
-        "estimated_monthly_savings": monthly_savings,
-        "estimated_annual_savings": annual_savings
-    })
-@app.route('/carbon', methods=['POST'])
-def carbon():
-
-    data = request.get_json()
-
-    monthly_units = data['monthly_units']
-
-    carbon_kg = round(monthly_units * 0.82, 2)
-
-    return jsonify({
-        "monthly_units": monthly_units,
-        "carbon_kg": carbon_kg
-    })
 @app.route('/eco_score', methods=['POST'])
 def eco_score():
 
@@ -137,6 +102,29 @@ def eco_score():
 
     return jsonify({
         "eco_score": score
+    })
+@app.route('/upload', methods=['POST'])
+def upload():
+
+    if 'file' not in request.files:
+        return jsonify({
+            "error": "No file uploaded"
+        }), 400
+
+    file = request.files['file']
+
+    upload_folder = 'uploads'
+
+    if not os.path.exists(upload_folder):
+        os.makedirs(upload_folder)
+
+    filepath = os.path.join(upload_folder, file.filename)
+
+    file.save(filepath)
+
+    return jsonify({
+        "message": "File uploaded successfully",
+        "filename": file.filename
     })
 if __name__ == '__main__':
     app.run(debug=True)
