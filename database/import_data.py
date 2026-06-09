@@ -1,17 +1,25 @@
+import json
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 
+# Load environment variables
 load_dotenv()
 
+# Get MongoDB URI
 uri = os.getenv("MONGO_URI")
 
-try:
-    client = MongoClient(uri)
+# Connect to MongoDB
+client = MongoClient(uri)
 
-    client.admin.command('ping')
+# Create/access database
+db = client["ecowatt"]
 
-    print("MongoDB Connected Successfully!")
+# Open JSON file
+with open("database/appliances.json") as file:
+    data = json.load(file)
 
-except Exception as e:
-    print(e)
+# Insert data into MongoDB
+db.appliances.insert_many(data)
+
+print("Appliance data imported successfully!")
