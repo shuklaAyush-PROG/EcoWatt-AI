@@ -1,0 +1,22 @@
+[
+  {
+    "size_kw": 1,
+    "price": 70000
+  },
+  {
+    "size_kw": 2,
+    "price": 140000
+  },
+  {
+    "size_kw": 3,
+    "price": 210000
+  },
+  {
+    "size_kw": 5,
+    "price": 350000
+  },
+  {
+    "size_kw": 10,
+    "price": 700000
+  }
+]

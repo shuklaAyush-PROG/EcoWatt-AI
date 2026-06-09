@@ -25,3 +25,7 @@ all_appliances = db.appliances.find()
 
 for item in all_appliances:
     print(item["name"], "-", item["power"], "W")
+
+solar = db.solar_pricing.find_one({"size_kw": 5})
+
+print(solar)
