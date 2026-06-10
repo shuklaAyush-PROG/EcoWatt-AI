@@ -1,7 +1,3 @@
-/* ══════════════════════════════════════════════
-   EcoWatt AI  — script.js
-   ══════════════════════════════════════════════ */
-
 /* ── CONSTANTS ── */
 const EMISSION_FACTOR = 0.716;    // kg CO2 per kWh (India avg grid)
 const SOLAR_PEAK_HOURS = 4.5;     // peak sun-hours/day (India avg)
