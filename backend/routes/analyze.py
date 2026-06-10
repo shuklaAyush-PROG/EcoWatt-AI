@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-
+from db import db
 analyze_bp = Blueprint('analyze', __name__)
 
 @analyze_bp.route('/analyze', methods=['POST'])
@@ -7,11 +7,22 @@ def analyze():
 
     data = request.get_json()
 
-    power = data['power']
+    appliance_name = data['appliance']
     quantity = data['quantity']
     hours = data['hours']
     rate = data['rate']
     solar_installed = data['solar_installed']
+
+    appliance = db.appliances.find_one({
+        "name": appliance_name
+    })
+
+    if not appliance:
+        return jsonify({
+            "error": "Appliance not found"
+        }), 404
+
+    power = appliance['power']
 
     # Energy calculation
     daily_units = (power * quantity * hours) / 1000
@@ -41,6 +52,8 @@ def analyze():
     score = max(score, 0)
 
     return jsonify({
+        "appliance": appliance_name,
+        "power": power,
         "daily_units": daily_units,
         "monthly_units": monthly_units,
         "monthly_bill": monthly_bill,
