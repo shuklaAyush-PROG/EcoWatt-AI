@@ -81,7 +81,10 @@ function calculate() {
   monthlyBill
 );
   updateSimulator();
-  drawEnergyChart(monthlyKwh);
+  drawEnergyChart(
+  applianceEl.value,
+  monthlyKwh
+);
   calculateROI();
 
 }
@@ -207,6 +210,13 @@ else{
     li.textContent = tip;
     list.appendChild(li);
   });
+  tips.push(
+  'Monitor energy consumption monthly to detect unusual usage patterns.'
+);
+
+tips.push(
+  'Schedule preventive maintenance to maintain appliance efficiency.'
+);
 }
 
 /* ── EXPANSION SIMULATOR ── */
@@ -220,7 +230,7 @@ function updateSimulator() {
   document.getElementById('simHoursVal').textContent = addHours;
 
   // Update range track fill
-  updateRangeTrack(unitsEl, 1, 50);
+  updateRangeTrack(unitsEl, 0, 50);
   updateRangeTrack(hoursEl, 0, 16);
 
   if (!state.calculated) return;
@@ -232,8 +242,8 @@ function updateSimulator() {
   const extraCO2  = extraKwh * EMISSION_FACTOR;
 
   document.getElementById('sim-extra-kwh').textContent  = extraKwh.toFixed(0) + ' kWh';
-  document.getElementById('sim-extra-cost').textContent = '₹' + extraCost.toFixed(0);
-  document.getElementById('sim-total-bill').textContent = '₹' + totalBill.toFixed(0);
+  document.getElementById('sim-extra-cost').textContent = 'Rs. ' + extraCost.toFixed(0);
+  document.getElementById('sim-total-bill').textContent = 'Rs. ' + totalBill.toFixed(0);
   document.getElementById('sim-extra-co2').textContent  = extraCO2.toFixed(1) + ' kg';
 }
 
@@ -243,7 +253,7 @@ function updateRangeTrack(input, min, max) {
 }
 
 /* ── PDF DOWNLOAD ── */
-function downloadPDF() {
+async function downloadPDF() {
   if (!state.calculated) {
     alert('Please run the analysis first before downloading the report.');
     return;
@@ -309,10 +319,44 @@ function downloadPDF() {
   // ── KPI Section ──
   let cy = sectionHeader('ENERGY METRICS', 34);
   cy = kpiRow('Monthly Consumption',   state.monthlyKwh.toFixed(1),  'kWh / month',   cy);
-  cy = kpiRow('Monthly Electricity Bill', '₹' + state.monthlyBill.toFixed(0), 'INR / month', cy);
+  cy = kpiRow('Monthly Electricity Bill', 'Rs. ' + state.monthlyBill.toFixed(0), 'INR / month', cy);
   cy = kpiRow('Solar Capacity Needed', state.solarKwp.toFixed(2),    'kWp system',    cy);
-  cy = kpiRow('Carbon Footprint',      state.carbonKg.toFixed(1),    'kg CO₂ / month',cy);
+  cy = kpiRow('Carbon Footprint',      state.carbonKg.toFixed(1),    'kg CO2 / month',cy);
+  cy = kpiRow(
+  'Annual Savings',
+  'Rs. ' + state.annualSavings.toFixed(0),
+  'INR / year',
+  cy
+);
+  // ENERGY TREND CHART
+cy += 4;
+cy = sectionHeader('ENERGY TREND ANALYSIS', cy);
 
+const chartCanvas = document.getElementById("energyChart");
+
+if(chartCanvas){
+
+  const chartImage =
+    chartCanvas.toDataURL("image/png");
+
+  doc.addImage(
+    chartImage,
+    "PNG",
+    15,
+    cy,
+    180,
+    60
+  );
+
+  cy += 65;
+ if(cy > 220){
+  doc.addPage();
+  doc.setFillColor(8,15,10);
+  doc.rect(0,0,W,H,'F');
+
+  cy = 20;
+}
+}
   // Score
   cy += 2;
   cy = sectionHeader('SUSTAINABILITY SCORE', cy);
@@ -320,6 +364,19 @@ function downloadPDF() {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(28);
   doc.text(state.score + ' / 100', W / 2, cy + 8, { align: 'center' });
+  let grade = "Excellent";
+
+if(state.score < 80) grade = "Good";
+if(state.score < 60) grade = "Fair";
+if(state.score < 40) grade = "Poor";
+
+doc.setFontSize(12);
+doc.text(
+  grade,
+  W/2,
+  cy + 18,
+  {align:'center'}
+);
   cy += 18;
 
   // ── Input Summary ──
@@ -333,36 +390,172 @@ function downloadPDF() {
   cy = kpiRow('Appliance',     appName, '',                   cy);
   cy = kpiRow('Quantity',      state.quantity.toString(), 'units', cy);
   cy = kpiRow('Daily Usage',   state.usageHours + ' hrs', 'per day', cy);
-  cy = kpiRow('Electricity Rate', '₹' + state.rate, 'per kWh', cy);
+  cy = kpiRow('Electricity Rate', 'Rs. ' + state.rate, 'per kWh', cy);
 
   // ── Recommendations ──
-  cy += 2;
-  cy = sectionHeader('AI RECOMMENDATIONS', cy);
-  const items = document.querySelectorAll('.reco-item:not(.reco-item--placeholder)');
-  doc.setFont('helvetica', 'normal');
-  items.forEach((item, i) => {
-    const txt = '• ' + item.textContent.trim();
-    const lines = doc.splitTextToSize(txt, W - 28);
-    doc.setTextColor(200, 230, 195);
-    doc.setFontSize(8);
-    doc.text(lines, 14, cy);
-    cy += lines.length * 5 + 2;
-    if (cy > H - 30) { doc.addPage(); doc.setFillColor(8,15,10); doc.rect(0,0,W,H,'F'); cy = 20; }
-  });
+// ── Recommendations ──
+const items = document.querySelectorAll(
+  '.reco-item:not(.reco-item--placeholder)'
+);
+
+// Estimate required space
+let recoHeight = 15;
+
+items.forEach(item => {
+  const lines = doc.splitTextToSize(
+    '• ' + item.textContent.trim(),
+    W - 28
+  );
+
+  recoHeight += (lines.length * 5 + 2);
+});
+
+// If section won't fit, start a new page
+if (cy + recoHeight > H - 25) {
+
+  doc.addPage();
+
+  doc.setFillColor(8, 15, 10);
+  doc.rect(0, 0, W, H, 'F');
+
+  cy = 20;
+}
+
+cy = sectionHeader('AI RECOMMENDATIONS', cy);
+
+doc.setFont('helvetica', 'normal');
+
+items.forEach(item => {
+
+  const txt =
+    '• ' + item.textContent.trim();
+
+  const lines =
+    doc.splitTextToSize(txt, W - 28);
+
+  doc.setTextColor(200, 230, 195);
+  doc.setFontSize(8);
+
+  doc.text(lines, 14, cy);
+
+  cy += lines.length * 5 + 2;
+});
+  cy += 8;
+
+cy = sectionHeader('SOLAR ROI SUMMARY', cy);
+
+cy = kpiRow(
+  'Estimated Solar Cost',
+  'Rs. ' + (state.solarKwp * 60000).toLocaleString('en-IN'),
+  '',
+  cy
+);
+
+cy = kpiRow(
+  'Annual Savings',
+  'Rs. ' + state.annualSavings.toFixed(0),
+  '',
+  cy
+);
+
+cy = kpiRow(
+  'Payback Period',
+  ((state.solarKwp * 60000) / state.annualSavings).toFixed(1),
+  'years',
+  cy
+);
+cy += 8;
+
+cy = sectionHeader('ENVIRONMENTAL IMPACT', cy);
+
+const treesEquivalent =
+(state.yearlyCO2Saved / 21.7).toFixed(1);
+
+cy = kpiRow(
+  'CO2 Saved Per Year',
+  state.yearlyCO2Saved.toFixed(0),
+  'kg',
+  cy
+);
+
+cy = kpiRow(
+  'Trees Equivalent',
+  treesEquivalent,
+  'trees',
+  cy
+);
+
+cy = kpiRow(
+  'Solar Offset Potential',
+  '80-100',
+  '%',
+  cy
+);
+cy += 8;
+
+cy = sectionHeader('EXECUTIVE SUMMARY', cy);
+
+doc.setFontSize(8);
+doc.setTextColor(200,230,195);
+
+const summary = `
+This facility consumes ${state.monthlyKwh.toFixed(1)} kWh per month,
+resulting in approximately ${state.carbonKg.toFixed(1)} kg of CO2 emissions.
+
+The sustainability score of ${state.score}/100 indicates strong energy efficiency performance.
+
+A ${state.solarKwp.toFixed(2)} kWp solar installation could substantially reduce dependence on grid electricity and improve long-term operating costs.
+
+Annual savings are estimated at Rs. ${state.annualSavings.toFixed(0)} while avoiding approximately ${state.yearlyCO2Saved.toFixed(0)} kg of CO2 emissions each year.
+`;
+const lines =
+doc.splitTextToSize(summary, 170);
+
+doc.text(lines, 14, cy);
 
   // ── Footer ──
-  doc.setFillColor(13, 26, 16);
-  doc.rect(0, H - 14, W, 14, 'F');
-  doc.setTextColor(62, 94, 56);
-  doc.setFontSize(7);
-  doc.text('EcoWatt AI — Sustainable Energy Planning Assistant  |  Data is illustrative. Consult a certified energy auditor for professional advice.', W / 2, H - 5, { align: 'center' });
+  // ── Footer ──
+doc.setFillColor(13, 26, 16);
+doc.rect(0, H - 18, W, 18, 'F');
 
+doc.setTextColor(132, 218, 97);
+doc.setFont('helvetica', 'bold');
+doc.setFontSize(8);
+
+doc.text(
+  'EcoWatt AI v1.0',
+  W / 2,
+  H - 11,
+  { align: 'center' }
+);
+
+doc.setTextColor(122, 155, 116);
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(7);
+
+doc.text(
+  'Sustainable Electricity Cost Predictor & Energy Planning Assistant',
+  W / 2,
+  H - 7,
+  { align: 'center' }
+);
+
+doc.text(
+  'Generated using AI-powered sustainability analysis',
+  W / 2,
+  H - 3,
+  { align: 'center' }
+);
   doc.save('EcoWatt-AI-Report.pdf');
 }
 
 /* ── INIT RANGE TRACKS ── */
 window.addEventListener('DOMContentLoaded', () => {
-  updateRangeTrack(document.getElementById('simUnits'), 1, 50);
+  updateRangeTrack(
+  document.getElementById('simUnits'),
+  0,
+  50
+);
   updateRangeTrack(document.getElementById('simHours'), 0, 16);
 });
 window.addEventListener("load", () => {
@@ -397,23 +590,129 @@ window.addEventListener("load", () => {
   }
 
 });
-function drawEnergyChart(monthlyKwh) {
+function drawEnergyChart(appliance, monthlyKwh) {
 
   const ctx = document.getElementById("energyChart");
-
   if (!ctx) return;
 
   if (window.energyChartInstance) {
     window.energyChartInstance.destroy();
   }
-  const data = [
-  monthlyKwh * (0.85 + Math.random()*0.1),
-  monthlyKwh * (0.90 + Math.random()*0.1),
-  monthlyKwh * (0.95 + Math.random()*0.1),
-  monthlyKwh,
-  monthlyKwh * (1.00 + Math.random()*0.1),
-  monthlyKwh * (1.05 + Math.random()*0.1)
-];
+
+  let data = [];
+
+  switch(appliance){
+
+  case "led_light":
+    data = [
+      monthlyKwh * 0.98,
+      monthlyKwh * 1.00,
+      monthlyKwh * 0.99,
+      monthlyKwh,
+      monthlyKwh * 1.01,
+      monthlyKwh * 1.00
+    ];
+    break;
+
+  case "refrigerator":
+    data = [
+      monthlyKwh * 0.97,
+      monthlyKwh * 0.99,
+      monthlyKwh,
+      monthlyKwh * 1.01,
+      monthlyKwh * 1.02,
+      monthlyKwh * 1.01
+    ];
+    break;
+
+  case "computer":
+  case "server":
+    data = [
+      monthlyKwh * 0.90,
+      monthlyKwh * 0.94,
+      monthlyKwh,
+      monthlyKwh * 1.05,
+      monthlyKwh * 1.08,
+      monthlyKwh * 1.03
+    ];
+    break;
+
+  case "washing_machine":
+    data = [
+      monthlyKwh * 0.85,
+      monthlyKwh * 1.00,
+      monthlyKwh * 0.92,
+      monthlyKwh * 1.08,
+      monthlyKwh * 0.95,
+      monthlyKwh * 1.10
+    ];
+    break;
+
+  case "microwave":
+    data = [
+      monthlyKwh * 0.88,
+      monthlyKwh * 0.95,
+      monthlyKwh,
+      monthlyKwh * 1.12,
+      monthlyKwh * 0.97,
+      monthlyKwh * 1.05
+    ];
+    break;
+
+  case "water_heater":
+    data = [
+      monthlyKwh * 0.80,
+      monthlyKwh * 0.90,
+      monthlyKwh,
+      monthlyKwh * 1.15,
+      monthlyKwh * 1.25,
+      monthlyKwh * 1.10
+    ];
+    break;
+
+  case "ac":
+    data = [
+      monthlyKwh * 0.70,
+      monthlyKwh * 0.80,
+      monthlyKwh * 0.95,
+      monthlyKwh,
+      monthlyKwh * 1.25,
+      monthlyKwh * 1.40
+    ];
+    break;
+
+  case "industrial_motor":
+    data = [
+      monthlyKwh * 0.90,
+      monthlyKwh * 0.95,
+      monthlyKwh,
+      monthlyKwh * 1.05,
+      monthlyKwh * 1.10,
+      monthlyKwh * 1.15
+    ];
+    break;
+
+  case "ev_charger":
+    data = [
+      monthlyKwh * 0.75,
+      monthlyKwh * 0.85,
+      monthlyKwh,
+      monthlyKwh * 1.15,
+      monthlyKwh * 1.30,
+      monthlyKwh * 1.45
+    ];
+    break;
+
+  default:
+    data = [
+      monthlyKwh * 0.95,
+      monthlyKwh,
+      monthlyKwh * 1.02,
+      monthlyKwh * 0.98,
+      monthlyKwh * 1.04,
+      monthlyKwh
+    ];
+};
 
 
 
@@ -437,9 +736,15 @@ function drawEnergyChart(monthlyKwh) {
         tension: 0.4
       }]
     },
-    options: {
-      responsive: true
+options: {
+  responsive: true,
+  maintainAspectRatio: true,
+  scales: {
+    y: {
+      beginAtZero: false
     }
+  }
+}
   });
 }
 function calculateROI() {
@@ -546,3 +851,16 @@ function updateComparison(appliance, monthlyBill) {
     <p><strong>Potential Savings:</strong> ₹${(monthlyBill-efficientBill).toFixed(0)}</p>
   `;
 }
+let grade = "Excellent";
+
+if(state.score < 80) grade = "Good";
+if(state.score < 60) grade = "Fair";
+if(state.score < 40) grade = "Poor";
+
+doc.setFontSize(12);
+doc.text(
+  grade,
+  W/2,
+  cy + 15,
+  {align:"center"}
+);

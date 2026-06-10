@@ -11,6 +11,7 @@
   <!-- jsPDF for PDF export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -224,13 +225,20 @@
         <div class="simulator-controls">
           <div class="sim-field">
             <label for="simUnits">Additional Units</label>
-            <input type="range" id="simUnits" min="1" max="50" value="5" oninput="updateSimulator()" />
-            <span class="range-val" id="simUnitsVal">5</span>
+            <input
+  type="range"
+  id="simUnits"
+  min="0"
+  max="50"
+  value="0"
+  oninput="updateSimulator()"
+/>
+            <span class="range-val" id="simUnitsVal">0</span>
           </div>
           <div class="sim-field">
             <label for="simHours">Extra Hours/Day</label>
-            <input type="range" id="simHours" min="0" max="16" value="2" step="0.5" oninput="updateSimulator()" />
-            <span class="range-val" id="simHoursVal">2</span>
+            <input type="range" id="simHours" min="0" max="16" value="0" step="0.5" oninput="updateSimulator()" />
+            <span class="range-val" id="simHoursVal">0</span>
           </div>
         </div>
 
