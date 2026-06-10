@@ -1,6 +1,9 @@
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import json
+
+
+from db import db
 
 from routes.energy import energy_bp
 from routes.solar import solar_bp
@@ -39,8 +42,9 @@ def status():
 @app.route('/appliances')
 def appliances():
 
-    with open('../data/appliances.json', 'r') as file:
-        data = json.load(file)
+    data = list(
+        db.appliances.find({}, {"_id": 0})
+    )
 
     return jsonify(data)
 
@@ -53,20 +57,18 @@ def calculate_by_appliance():
     quantity = data['quantity']
     hours = data['hours']
 
-    with open('../data/appliances.json', 'r') as file:
-        appliances = json.load(file)
+    appliance = db.appliances.find_one(
+        {"name": appliance_name},
+        {"_id": 0}
+    )
 
-    power = None
+    if appliance is None:
 
-    for appliance in appliances:
-        if appliance['name'].lower() == appliance_name.lower():
-            power = appliance['power']
-            break
-
-    if power is None:
         return jsonify({
             "error": "Appliance not found"
         }), 404
+
+    power = appliance["power"]
 
     daily_units = (power * quantity * hours) / 1000
     monthly_units = daily_units * 30
@@ -77,6 +79,7 @@ def calculate_by_appliance():
         "daily_units": daily_units,
         "monthly_units": monthly_units
     })
+
 @app.route('/bill', methods=['POST'])
 def bill():
 
