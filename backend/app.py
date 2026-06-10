@@ -189,6 +189,34 @@ def eco_score():
     return jsonify({
         "eco_score": score
     })
+
+@app.route('/business_recommendation', methods=['POST'])
+def business_recommendation():
+
+    data = request.get_json()
+
+    business_type = data['type']
+
+    business = db.business_types.find_one(
+        {"type": business_type},
+        {"_id": 0}
+    )
+
+    if business is None:
+
+        return jsonify({
+            "error": "Business type not found"
+        }), 404
+
+    return jsonify({
+
+        "business_type": business_type,
+
+        "recommended_appliances":
+        business["recommended_appliances"]
+
+    })
+
 @app.route('/upload', methods=['POST'])
 def upload():
 

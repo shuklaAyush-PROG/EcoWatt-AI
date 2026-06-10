@@ -2,14 +2,15 @@ from flask import Blueprint, request, jsonify
 from db import db
 
 solar_bp = Blueprint('solar', __name__)
-import json
 
 # ==========================
 # Solar Recommendation
 # ==========================
 
 def recommend_solar(roof_size, monthly_usage):
+
     required_kw = monthly_usage / 120
+
     max_kw = roof_size / 100
 
     return round(min(required_kw, max_kw), 2)
@@ -34,17 +35,16 @@ CITY_FACTOR = {
 
 def get_system_cost(solar_size):
 
-    solar_data = db.solar_pricing.find()
-
-    closest_price = solar_size * 50000
+    # Find closest larger/equal system
+    solar_data = db.solar_pricing.find().sort("size_kw", 1)
 
     for item in solar_data:
 
-        if solar_size <= item["size_kw"]:
-            closest_price = item["price"]
-            break
+        if round(solar_size) == item["size_kw"]:
+            return item["price"]
 
-    return closest_price
+    # Fallback if larger than available DB sizes
+    return round(solar_size * 65000)
 
 
 # ==========================
@@ -94,13 +94,12 @@ def calculate_payback(system_cost, annual_savings):
 
 def sustainability_score(solar_size, roof_size):
 
-    return min(
-        100,
-        round(
-            (solar_size * 15)
-            + (roof_size / 50)
-        )
+    score = (
+        (solar_size * 15)
+        + (roof_size / 50)
     )
+
+    return min(100, round(score))
 
 
 # ==========================
@@ -130,6 +129,7 @@ def generate_recommendations(monthly_usage):
     recommendations = []
 
     if monthly_usage > 500:
+
         recommendations.append(
             "Shift heavy appliances to daytime"
         )
@@ -147,6 +147,11 @@ def generate_recommendations(monthly_usage):
     )
 
     return recommendations
+
+
+# ==========================
+# Solar Route
+# ==========================
 
 @solar_bp.route('/solar', methods=['POST'])
 def solar():
@@ -196,13 +201,21 @@ def solar():
     return jsonify({
 
         "solarSize": solar_size,
+
         "monthlyGeneration": generation,
+
         "monthlySavings": savings["monthly"],
+
         "annualSavings": savings["annual"],
+
         "systemCost": system_cost,
+
         "paybackYears": payback,
+
         "score": score,
+
         "grade": grade,
+
         "recommendations": recommendations
 
     })
