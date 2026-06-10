@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from db import db
 from routes.business import business_bp
+from routes.smart_business import smart_business_bp
 import json
 
 from routes.energy import energy_bp
@@ -28,6 +29,7 @@ app.register_blueprint(solar_bp)
 app.register_blueprint(carbon_bp)
 app.register_blueprint(analyze_bp)
 app.register_blueprint(business_bp)
+app.register_blueprint(smart_business_bp)
 import os
 
 
