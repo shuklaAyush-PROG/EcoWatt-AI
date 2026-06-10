@@ -1,14 +1,15 @@
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
-
 from db import db
+from routes.business import business_bp
+import json
 
 from routes.energy import energy_bp
 from routes.solar import solar_bp
 from routes.carbon import carbon_bp
 from routes.analyze import analyze_bp
+
 
 from routes.solar import (
     recommend_solar,
@@ -26,6 +27,7 @@ app.register_blueprint(energy_bp)
 app.register_blueprint(solar_bp)
 app.register_blueprint(carbon_bp)
 app.register_blueprint(analyze_bp)
+app.register_blueprint(business_bp)
 import os
 
 
